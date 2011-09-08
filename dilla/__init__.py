@@ -248,6 +248,11 @@ class Dilla(object):
             # ManyToMany fields if any
 
             for field in record.model._meta.many_to_many:
+                # If the ManyToMany relation has an intermediary model, the add
+                # and remove methods do not exist. The intermediary model would
+                # probably have been spammed, anyway.
+                if not field.rel.through._meta.auto_created:
+                    continue
                 record.field = field
                 record.many_to_many = True
                 self.spam(record)
